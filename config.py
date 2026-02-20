@@ -1,0 +1,19 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# API KEYS FROM ENVIRONMENT
+VIRUSTOTAL_API_KEY = os.getenv("VIRUSTOTAL_API_KEY")
+GOOGLE_SAFE_BROWSING_API_KEY = os.getenv("GOOGLE_SAFE_BROWSING_API_KEY")
+
+# MODEL
+MODEL_PATH = "models/phishing_model.cbm"
+
+# RISK WEIGHTS
+ML_WEIGHT = 0.5
+VIRUSTOTAL_WEIGHT = 0.3
+GOOGLE_WEIGHT = 0.2
+
+# NETWORK
+REQUEST_TIMEOUT = 5
