@@ -1,13 +1,12 @@
 import pandas as pd
 from catboost import CatBoostClassifier
 from config import MODEL_PATH
-from services.risk_engine import calculate_final_risk
 
 # Load model once at startup
 model = CatBoostClassifier()
 model.load_model(MODEL_PATH)
 
-# Exact feature order used during training
+# 🔥 IMPORTANT: Exact feature order used during training
 FEATURE_COLUMNS = [
     'IsHTTPS',
     'IsDomainIP',
@@ -45,45 +44,22 @@ FEATURE_COLUMNS = [
     'InteractiveElementDensity'
 ]
 
-
-def predict(features_dict, google_safe=True, vt_score=0):
+def predict(features_dict):
     """
-    Takes:
-    - features_dict → extracted features
-    - google_safe → bool (True if safe)
-    - vt_score → percentage (0–100)
-
-    Returns:
-    - ML score
-    - Reputation data
-    - Final hybrid risk score
+    Takes dictionary of features and returns:
+    - predicted class
+    - prediction probability
     """
 
     df = pd.DataFrame([features_dict])
 
-    # Ensure correct feature order
+    # Ensure correct order
     df = df[FEATURE_COLUMNS]
 
-    # ML prediction
-    prediction = int(model.predict(df)[0])
-    probability = float(model.predict_proba(df)[0][1])
-
-    # Convert ML probability to 0–100 score
-    ml_score = probability * 100
-
-    # 🔥 Hybrid Risk Calculation
-    final_score, risk_level = calculate_final_risk(
-        ml_score=ml_score,
-        google_safe=google_safe,
-        vt_score=vt_score
-    )
+    prediction = model.predict(df)[0]
+    probability = model.predict_proba(df)[0][1]
 
     return {
-        "ml_prediction": prediction,
-        "ml_probability": round(probability, 4),
-        "ml_score": round(ml_score, 2),
-        "google_safe": google_safe,
-        "vt_score": round(vt_score, 2),
-        "final_score": final_score,
-        "risk_level": risk_level
+        "prediction": int(prediction),
+        "probability": float(probability)
     }
