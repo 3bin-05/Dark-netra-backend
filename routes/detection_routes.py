@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from services.feature_extraction.feature_pipeline import extract_all_features
 from services.model_service import predict
+from services.risk_scoring_service import calculate_risk
 from services.threat_intelligence.virustotal_service import check_virustotal
 from services.threat_intelligence.google_safe_browsing_service import check_google_safe
 
